@@ -4,20 +4,27 @@ namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-use function App\Arrays\apply;
+use function App\Arrays\get;
 
 class ArraysTest extends TestCase
 {
     public function testGet()
     {
-        $cities = ['moscow', 'london', 'berlin', 'porto'];
+        $cities = ['moscow', 'london', 'berlin', 'porto', null];
 
-        $result1 = apply($cities, 'reset');
-        $this->assertEquals([], $result1);
+        $actual1 = get($cities, 0);
+        $this->assertEquals($cities[0], $actual1);
 
-        $result2 = apply($cities, 'remove', 1);
-        $this->assertEquals(['moscow', 'berlin', 'porto'], array_values($result2));
-        $result3 = apply($cities, 'change', 0, 'miami');
-        $this->assertEquals(['miami', 'london', 'berlin', 'porto'], array_values($result3));
+        $actual2 = get($cities, 2, 'default');
+        $this->assertEquals($cities[2], $actual2);
+
+        $actual3 = get($cities, 4, false);
+        $this->assertNull($actual3);
+
+        $actual4 = get($cities, -1, 'oops');
+        $this->assertEquals('oops', $actual4);
+
+        $actual5 = get($cities, 4, 'default');
+        $this->assertEquals($cities[4], $actual5);
     }
 }
