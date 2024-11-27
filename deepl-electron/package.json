@@ -1,11 +1,13 @@
 {
   "name": "deepl-electron",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "main": "src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron .",
-    "build": "electron-builder"
+    "version:patch": "npm version patch --no-git-tag-version",
+    "prebuild": "npm run version:patch",
+    "build": "electron-builder",
+    "start": "electron ."
   },
   "build": {
     "appId": "com.translator.app",
