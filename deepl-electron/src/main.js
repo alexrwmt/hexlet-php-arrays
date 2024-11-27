@@ -1,81 +1,99 @@
 const { app, BrowserWindow, globalShortcut, clipboard, ipcMain } = require('electron');
 const path = require('path');
-const Store = require('electron-store');
-const store = new Store();
+const axios = require('axios');
+const packageJson = require('../package.json');
 
-let mainWindow;
+(async () => {
+    const Store = (await import('electron-store')).default;
+    const store = new Store();
 
-function createWindow() {
-    mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js')
-        },
-        // Скрываем стандартную рамку окна для более нативного вида
-        frame: false,
-        // Делаем окно всегда поверх остальных
-        alwaysOnTop: true
-    });
+    // Сохраняем API ключ в store при первом запуске
+    if (!store.get('DEEPL_API_KEY')) {
+        store.set('DEEPL_API_KEY', '822fb392-0b7f-4638-a9af-3e55dc96b434:fx');
+    }
 
-    mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
-    
-    // По умолчанию скрываем окно
-    mainWindow.hide();
-}
+    let mainWindow;
 
-// Регистрация глобальных горячих клавиш
-function registerShortcuts() {
-    // Показать/скрыть окно
-    globalShortcut.register('CommandOrControl+Shift+T', () => {
-        if (mainWindow.isVisible()) {
+    function createWindow() {
+        mainWindow = new BrowserWindow({
+            width: 800,
+            height: 600,
+            title: `Translator v${packageJson.version}`,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: true,
+                preload: path.join(__dirname, 'preload.js')
+            },
+            frame: false,
+            alwaysOnTop: true
+        });
+
+        mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+        
+        // Скрываем окно после загрузки
+        mainWindow.webContents.on('did-finish-load', () => {
             mainWindow.hide();
-        } else {
-            mainWindow.show();
+        });
+
+        // Скрываем окно при потере фокуса
+        mainWindow.on('blur', () => {
+            mainWindow.hide();
+        });
+    }
+
+    // Регистрация глобальных горячих клавиш
+    function registerShortcuts() {
+        globalShortcut.register('Super+Alt+T', () => {
+            if (mainWindow.isVisible()) {
+                mainWindow.hide();
+            } else {
+                mainWindow.show();
+            }
+        });
+
+        globalShortcut.register('Super+Alt+V', () => {
+            const text = clipboard.readText();
+            if (text) {
+                mainWindow.show();
+                mainWindow.webContents.send('translate-clipboard', text);
+            }
+        });
+    }
+
+    app.whenReady().then(() => {
+        createWindow();
+        registerShortcuts();
+    });
+
+    // Обновляем обработчик перевода
+    ipcMain.handle('translate-text', async (event, { text, fromLang, toLang }) => {
+        try {
+            const response = await axios.post('https://api-free.deepl.com/v2/translate', 
+                new URLSearchParams({
+                    auth_key: store.get('DEEPL_API_KEY'), // Используем ключ из store
+                    text: text,
+                    source_lang: fromLang,
+                    target_lang: toLang
+                }), {
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                });
+            
+            if (response.data && response.data.translations && response.data.translations[0]) {
+                return response.data.translations[0].text;
+            } else {
+                throw new Error('Invalid response format');
+            }
+        } catch (error) {
+            console.error('Translation error:', error.response?.data || error.message);
+            throw new Error('Translation error occurred');
         }
     });
 
-    // Перевести текст из буфера обмена
-    globalShortcut.register('CommandOrControl+Shift+V', () => {
-        const text = clipboard.readText();
-        if (text) {
-            mainWindow.show();
-            mainWindow.webContents.send('translate-clipboard', text);
+    app.on('window-all-closed', () => {
+        if (process.platform !== 'darwin') {
+            app.quit();
         }
     });
-}
-
-app.whenReady().then(() => {
-    createWindow();
-    registerShortcuts();
-});
-
-// Обработка перевода
-ipcMain.handle('translate-text', async (event, { text, fromLang, toLang }) => {
-    try {
-        const response = await axios.post('https://api-free.deepl.com/v2/translate', 
-            new URLSearchParams({
-                auth_key: process.env.DEEPL_API_KEY,
-                text: text,
-                source_lang: fromLang,
-                target_lang: toLang
-            }), {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            });
-        return response.data.translations[0].text;
-    } catch (error) {
-        console.error('Translation error:', error);
-        throw error;
-    }
-});
-
-// Сохраняем окно активным при закрытии macOS
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
+})();
