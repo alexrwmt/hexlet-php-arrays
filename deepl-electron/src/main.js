@@ -1,15 +1,22 @@
+require('dotenv').config();
 const { app, BrowserWindow, globalShortcut, clipboard, ipcMain } = require('electron');
 const path = require('path');
 const axios = require('axios');
 const packageJson = require('../package.json');
 
 (async () => {
-    const Store = (await import('electron-store')).default;
+    const { default: Store } = await import('electron-store');
     const store = new Store();
 
     // Сохраняем API ключ в store при первом запуске
     if (!store.get('DEEPL_API_KEY')) {
-        store.set('DEEPL_API_KEY', '822fb392-0b7f-4638-a9af-3e55dc96b434:fx');
+        const apiKey = process.env.DEEPL_API_KEY;
+        if (!apiKey) {
+            console.error('DEEPL_API_KEY not found in .env file');
+            app.quit();
+            return;
+        }
+        store.set('DEEPL_API_KEY', apiKey);
     }
 
     let mainWindow;
@@ -20,8 +27,9 @@ const packageJson = require('../package.json');
             height: 600,
             title: `Translator v${packageJson.version}`,
             webPreferences: {
-                nodeIntegration: true,
                 contextIsolation: true,
+                enableRemoteModule: false,
+                nodeIntegration: false,
                 preload: path.join(__dirname, 'preload.js')
             },
             // frame: false,
@@ -102,6 +110,25 @@ const packageJson = require('../package.json');
     app.on('window-all-closed', () => {
         if (process.platform !== 'darwin') {
             app.quit();
+        }
+    });
+
+
+    ipcMain.handle('get-usage-info', async (event) => {
+        const authKey = store.get('DEEPL_API_KEY'); // Получаем API ключ из хранилища
+        try {
+            const response = await axios.get('https://api-free.deepl.com/v2/usage', {
+                headers: {
+                    'Authorization': `DeepL-Auth-Key ${authKey}`
+                }
+            });
+            return {
+                characterCount: response.data.character_count,
+                characterLimit: response.data.character_limit
+            };
+        } catch (error) {
+            console.error('Error fetching usage info:', error);
+            throw new Error('Failed to fetch usage info');
         }
     });
 })();

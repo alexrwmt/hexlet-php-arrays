@@ -68,6 +68,26 @@
             ></textarea>
         </div>
     </div>
-    <script src="renderer.js"></script>
+
+    <!-- Ссылка About -->
+    <div class="version" id="aboutBtn">about</div>
+
+    <!-- Попап About -->
+    <div id="aboutPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-gray-800 p-6 rounded-lg">
+            <h2 class="text-xl font-semibold mb-2">DeepL v<span id="appVersion">...</span></h2>
+            <p>(c) VasilyChapaev</p>
+            <p class="text-gray-400">Hotkeys: 
+                <div><span class="font-semibold">Cmd+Alt+T</span> - show/hide</div>
+                <div><span class="font-semibold">Cmd+Alt+V</span> - translate clipboard</div>
+            </p>
+            <p id="tokenInfo" class="text-gray-400">api usage: .../...</p>
+            <button id="closePopup" class="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Close</button>
+        </div>
+    </div>
+
+    <script src="preload.js" defer></script>
+    <script src="renderer.js" defer></script>
+  
 </body>
 </html>
