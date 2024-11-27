@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Translator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="titlebar">
+        <div class="titlebar-drag">Translator</div>
+        <button class="titlebar-close" id="closeBtn">×</button>
+    </div>
+
+    <div class="container">
+        <div class="language-selector">
+            <select id="fromLang">
+                <option value="EN">English</option>
+                <option value="RU">Russian</option>
+                <option value="DE">German</option>
+                <!-- Добавьте другие языки -->
+            </select>
+            
+            <select id="toLang">
+                <option value="RU">Russian</option>
+                <option value="EN">English</option>
+                <option value="DE">German</option>
+                <!-- Добавьте другие языки -->
+            </select>
+        </div>
+
+        <textarea id="sourceText" placeholder="Enter text to translate"></textarea>
+        <textarea id="translatedText" readonly></textarea>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
