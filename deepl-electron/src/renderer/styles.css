@@ -1,53 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    @apply bg-gray-900 text-white;
 }
 
-.titlebar {
-    -webkit-app-region: drag;
-    height: 32px;
-    background: #f5f5f5;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px;
+.loader {
+    display: none;
+    border: 3px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 3px solid #3498db;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
 }
 
-.titlebar-close {
-    -webkit-app-region: no-drag;
-    border: none;
-    background: none;
-    font-size: 20px;
-    cursor: pointer;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-.container {
-    padding: 20px;
+.loader.active {
+    display: block;
 }
 
-.language-selector {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+/* Стили для радио-кнопок языков */
+.radio-flag:checked + label {
+    @apply bg-blue-600 border-blue-400;
+    transform: scale(1.05);
+    transition: all 0.2s ease;
 }
 
-select {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+/* Стили для неактивных кнопок */
+.radio-flag + label {
+    @apply border-gray-600;
+    transition: all 0.2s ease;
 }
 
-textarea {
-    width: 100%;
-    height: 200px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    resize: none;
-}
-
-#translatedText {
-    background-color: #f5f5f5;
+/* Эффект при наведении */
+.radio-flag + label:hover {
+    @apply bg-gray-800 border-gray-500;
 }

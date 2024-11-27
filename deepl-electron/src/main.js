@@ -24,21 +24,21 @@ const packageJson = require('../package.json');
                 contextIsolation: true,
                 preload: path.join(__dirname, 'preload.js')
             },
-            frame: false,
+            // frame: false,
             alwaysOnTop: true
         });
 
         mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
         
         // Скрываем окно после загрузки
-        mainWindow.webContents.on('did-finish-load', () => {
-            mainWindow.hide();
-        });
+        // mainWindow.webContents.on('did-finish-load', () => {
+        //     mainWindow.hide();
+        // });
 
         // Скрываем окно при потере фокуса
-        mainWindow.on('blur', () => {
-            mainWindow.hide();
-        });
+        // mainWindow.on('blur', () => {
+        //     mainWindow.hide();
+        // });
     }
 
     // Регистрация глобальных горячих клавиш
@@ -89,6 +89,14 @@ const packageJson = require('../package.json');
             console.error('Translation error:', error.response?.data || error.message);
             throw new Error('Translation error occurred');
         }
+    });
+
+    ipcMain.on('minimize-window', () => {
+        mainWindow.minimize();
+    });
+
+    ipcMain.on('close-window', () => {
+        mainWindow.hide(); // Скрываем окно вместо закрытия
     });
 
     app.on('window-all-closed', () => {

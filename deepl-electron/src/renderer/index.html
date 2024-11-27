@@ -3,20 +3,70 @@
 <head>
     <title>DeepL Translator</title>
     <meta charset="UTF-8">
+    <link href="styles.output.css" rel="stylesheet">
 </head>
-<body>
-    <div>
-        <textarea id="sourceText" placeholder="Введите текст для перевода"></textarea>
-        <select id="fromLang">
-            <option value="EN">English</option>
-            <option value="RU">Russian</option>
-        </select>
-        <select id="toLang">
-            <option value="RU">Russian</option>
-            <option value="EN">English</option>
-        </select>
-        <button id="translateBtn">Перевести</button>
-        <textarea id="translatedText" readonly></textarea>
+<body class="p-4 h-screen">
+    <div class="h-full max-w-6xl mx-auto flex gap-4">
+        <!-- Левая панель (исходный текст) -->
+        <div class="flex-1 space-y-2">
+            <div class="flex items-center gap-4 mb-2">
+                <div class="flex items-center gap-2">
+                    <input type="radio" id="from-en" name="fromLang" value="EN" class="hidden radio-flag" checked>
+                    <label for="from-en" class="flex items-center gap-1 px-3 py-1 border-2 rounded-full cursor-pointer">
+                        <img src="https://flagcdn.com/w20/gb.png" alt="English" class="w-5">
+                        <span>EN</span>
+                    </label>
+
+                    <input type="radio" id="from-ru" name="fromLang" value="RU" class="hidden radio-flag">
+                    <label for="from-ru" class="flex items-center gap-1 px-3 py-1 border-2 rounded-full cursor-pointer">
+                        <img src="https://flagcdn.com/w20/ru.png" alt="Russian" class="w-5">
+                        <span>RU</span>
+                    </label>
+
+                    <input type="radio" id="from-pl" name="fromLang" value="PL" class="hidden radio-flag">
+                    <label for="from-pl" class="flex items-center gap-1 px-3 py-1 border-2 rounded-full cursor-pointer">
+                        <img src="https://flagcdn.com/w20/pl.png" alt="Polish" class="w-5">
+                        <span>PL</span>
+                    </label>
+                </div>
+            </div>
+            <textarea 
+                id="sourceText" 
+                placeholder="Введите текст для перевода..." 
+                class="w-full h-[calc(100%-60px)] p-3 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-800"
+            ></textarea>
+        </div>
+
+        <!-- Правая панель (перевод) -->
+        <div class="flex-1 space-y-2">
+            <div class="flex items-center justify-between gap-4 mb-2">
+                <div class="flex items-center gap-2">
+                    <input type="radio" id="to-en" name="toLang" value="EN" class="hidden radio-flag">
+                    <label for="to-en" class="flex items-center gap-1 px-3 py-1 border-2 rounded-full cursor-pointer hover:bg-gray-800">
+                        <img src="https://flagcdn.com/w20/gb.png" alt="English" class="w-5">
+                        <span>EN</span>
+                    </label>
+
+                    <input type="radio" id="to-ru" name="toLang" value="RU" class="hidden radio-flag" checked>
+                    <label for="to-ru" class="flex items-center gap-1 px-3 py-1 border-2 rounded-full cursor-pointer hover:bg-gray-800">
+                        <img src="https://flagcdn.com/w20/ru.png" alt="Russian" class="w-5">
+                        <span>RU</span>
+                    </label>
+
+                    <input type="radio" id="to-pl" name="toLang" value="PL" class="hidden radio-flag">
+                    <label for="to-pl" class="flex items-center gap-1 px-3 py-1 border-2 rounded-full cursor-pointer hover:bg-gray-800">
+                        <img src="https://flagcdn.com/w20/pl.png" alt="Polish" class="w-5">
+                        <span>PL</span>
+                    </label>
+                </div>
+                <div id="loader" class="loader"></div>
+            </div>
+            <textarea 
+                id="translatedText" 
+                readonly 
+                class="w-full h-[calc(100%-60px)] p-3 rounded-lg resize-none focus:outline-none bg-gray-800 bg-opacity-50"
+            ></textarea>
+        </div>
     </div>
     <script src="renderer.js"></script>
 </body>
