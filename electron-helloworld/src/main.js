@@ -11,8 +11,12 @@ function createWindow() {
         }
     })
 
-    // win.loadFile(path.join(__dirname, '../index.html')
-    win.loadFile('index.html')
+    // Передаем версию приложения через query параметр
+    win.loadFile('index.html', {
+        query: {
+            'app-version': app.getVersion()
+        }
+    })
 }
 
 app.whenReady().then(() => {
