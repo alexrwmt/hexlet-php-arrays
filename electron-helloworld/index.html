@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World!</title>
+    <meta charset="UTF-8">
+    <style>
+        .version {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello World!</h1>
+    <p>Это моё первое Electron приложение.</p>
+    <div class="version">Версия: <span id="version">...</span></div>
+
+    <script>
+        // Получаем версию из URL параметров
+        const urlParams = new URLSearchParams(window.location.search);
+        const version = urlParams.get('app-version');
+        document.getElementById('version').textContent = version;
+    </script>
+</body>
+</html>

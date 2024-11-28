@@ -1,0 +1,40 @@
+{
+  "name": "deepl-electron",
+  "version": "1.0.6",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "version:patch": "npm version patch --no-git-tag-version",
+    "prebuild": "npm run version:patch",
+    "build": "electron-builder",
+    "start": "electron . --trace-warnings",
+    "build:css": "tailwindcss -i ./src/renderer/styles.css -o ./src/renderer/styles.output.css",
+    "watch:css": "tailwindcss -i ./src/renderer/styles.css -o ./src/renderer/styles.output.css --watch"
+  },
+  "build": {
+    "appId": "com.translator.app",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "icon": "build/icons/icon.icns"
+    },
+    "linux": {
+      "icon": "build/icons/icon.png"
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.8",
+    "dotenv": "^16.4.5",
+    "electron-store": "^10.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15"
+  }
+}
